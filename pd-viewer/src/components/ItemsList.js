@@ -1,8 +1,9 @@
 //ItemsList
 
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import styled from 'styled-components';
 import PdItem from './PdItem';
+import axios from 'axios';
 
 
 const ItemsListBlock = styled.div`
@@ -17,23 +18,39 @@ const ItemsListBlock = styled.div`
     padding-right: 1rem;
   }
 `;
-const sampleArticle = {
-    MAIN_TITLE: '제목',
-    ITEMCNTNTS: '내용',
-    MAIN_IMG_NORMAL:'https://via.placeholder.com/160',
-}
+//여기서 부터 수정 작업 필요.
+const ItemsList = ({ category }) => {
+  const [loading, response, error] = usePromise(() => {
+    const query = category === 'all' ? '' : `&category=${category}`;
+    return axios.get(
+      `https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=0a8c4202385d4ec1bb93b7e277b3c51f`,
+    );
+  }, [category]);
 
-const ItemsList = () => {
-    return (
-        <ItemsListBlock>
-            <PdItem article={sampleArticle}/>
-            <PdItem article={sampleArticle}/>
-            <PdItem article={sampleArticle}/>
-            <PdItem article={sampleArticle}/>
-            <PdItem article={sampleArticle}/>
-        </ItemsListBlock>
-    )
+  // 대기중일 때
+  if (loading) {
+    return <ItemsListBlock>대기중...</ItemsListBlock>;
+  }
+  // 아직 response 값이 설정되지 않았을 때
+  if (!response) {
+    console.log("response 응답이 없을 경우.")
+    return null;
+  }
 
+  // 에러가 발생했을 때
+  if (error) {
+    return <ItemsListBlock>에러 발생!</ItemsListBlock>;
+  }
+
+  // response 값이 유효할 때
+  const { articles } = response.data;
+  return (
+    <ItemsListBlock>
+      {articles.map(article => (
+        <PdItem key={article.url} article={article} />
+      ))}
+    </ItemsListBlock>
+  );
 };
 
 export default ItemsList;
