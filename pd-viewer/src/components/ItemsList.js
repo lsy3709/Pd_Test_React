@@ -19,35 +19,44 @@ const ItemsListBlock = styled.div`
   }
 `;
 //여기서 부터 수정 작업 필요.
-const ItemsList = ({ category }) => {
-  const [loading, response, error] = usePromise(() => {
-    const query = category === 'all' ? '' : `&category=${category}`;
-    return axios.get(
-      `https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=0a8c4202385d4ec1bb93b7e277b3c51f`,
-    );
-  }, [category]);
+const ItemsList = () => {
+  const [articles,setArticles] = useState(null);
+  const[loading,setLoading] = useState(false);
+
+  useEffect(()=>{
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          'https://apis.data.go.kr/6260000/FoodService/getFoodKr?serviceKey=ALRX9GpugtvHxcIO%2FiPg1vXIQKi0E6Kk1ns4imt8BLTgdvSlH%2FAKv%2BA1GcGUQgzuzqM3Uv1ZGgpG5erOTDcYRQ%3D%3D&numOfRows=100&pageNo=1&resultType=json'
+        );
+        console.log(response.data.getFoodKr.item)
+        setArticles(response.data.getFoodKr.item);
+      } catch(e) {
+        console.log(e)
+      }
+      setLoading(false);
+    };
+    fetchData();
+  },[])
+
 
   // 대기중일 때
   if (loading) {
-    return <ItemsListBlock>대기중...</ItemsListBlock>;
+    return <ItemsListBlock>대기중...</ItemsListBlock>
   }
   // 아직 response 값이 설정되지 않았을 때
-  if (!response) {
-    console.log("response 응답이 없을 경우.")
+  if (!articles) {
+    console.log("articles 응답이 없을 경우.")
     return null;
   }
 
-  // 에러가 발생했을 때
-  if (error) {
-    return <ItemsListBlock>에러 발생!</ItemsListBlock>;
-  }
-
   // response 값이 유효할 때
-  const { articles } = response.data;
+  
   return (
     <ItemsListBlock>
       {articles.map(article => (
-        <PdItem key={article.url} article={article} />
+        <PdItem key={article.MAIN_TITLE} article={article} />
       ))}
     </ItemsListBlock>
   );
