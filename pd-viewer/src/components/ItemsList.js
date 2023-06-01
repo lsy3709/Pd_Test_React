@@ -4,7 +4,7 @@ import React,{useState,useEffect} from 'react';
 import styled from 'styled-components';
 import PdItem from './PdItem';
 import axios from 'axios';
-import usePromise from '../lib/usePromise';
+// import usePromise from '../lib/usePromise';
 
 
 const ItemsListBlock = styled.div`

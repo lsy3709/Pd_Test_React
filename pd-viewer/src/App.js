@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
-import ItemsList from "./components/ItemsList";
-import Categories from "./components/Categories";
+// import { useState, useCallback } from "react";
+// import ItemsList from "./components/ItemsList";
+// import Categories from "./components/Categories";
 import {Route, Routes} from 'react-router-dom';
 import ItemsPage from './pages/ItemsPage';
 
